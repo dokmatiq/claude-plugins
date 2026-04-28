@@ -1,0 +1,42 @@
+{
+  "name": "dokmatiq",
+  "owner": {
+    "name": "Dokmatiq",
+    "email": "support@dokmatiq.com",
+    "url": "https://dokmatiq.com"
+  },
+  "plugins": [
+    {
+      "name": "docgen",
+      "source": "./docgen",
+      "description": "Document generation with stationery overlay, e-invoicing (ZUGFeRD/XRechnung), Excel, PDF signing, and AI receipt recognition. Bundles the Dokmatiq DocGen MCP server (40 tools) with a triggering skill.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Dokmatiq",
+        "url": "https://dokmatiq.com"
+      },
+      "homepage": "https://dokmatiq.com",
+      "repository": "https://github.com/dokmatiq/claude-plugins",
+      "license": "MIT",
+      "category": "document-automation",
+      "tags": [
+        "pdf",
+        "docx",
+        "excel",
+        "zugferd",
+        "xrechnung",
+        "e-invoice",
+        "rechnung",
+        "receipt-recognition",
+        "beleg",
+        "datev",
+        "skr03",
+        "skr04",
+        "document-generation",
+        "digital-signature",
+        "stationery-overlay",
+        "briefpapier"
+      ]
+    }
+  ]
+}

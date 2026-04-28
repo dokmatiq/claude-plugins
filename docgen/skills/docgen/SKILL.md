@@ -1,0 +1,142 @@
+---
+name: docgen
+description: Use this skill when the user wants to generate, transform, or analyze documents — including PDF, DOCX, ODT, or Excel/XLSX files — with optional stationery overlay (Briefpapier/letterhead branding applied to generated PDFs). Covers e-invoicing (ZUGFeRD, XRechnung, Factur-X, EN 16931), digital PDF signatures with PKCS#12 certificates, PDF operations (merge, split, rotate, PDF/A conversion, form filling, metadata, text extraction), Excel workbook generation from JSON or CSV with formulas and styling, and AI-powered receipt/invoice recognition (vendor, totals, line items, VAT breakdown, German bookkeeping codes SKR03/SKR04, DATEV-compatible CSV export). Trigger keywords include PDF, DOCX, ODT, Excel, XLSX, Rechnung, Invoice, ZUGFeRD, XRechnung, Beleg, Spesen, Quittung, Stationery, Briefpapier, Letterhead, Wasserzeichen, watermark, sign PDF, fill form, OCR receipt, DATEV, expense report, Buchhaltung. Requires the dokmatiq-docgen MCP server to be configured (auto-loaded by this plugin) and DOCGEN_API_KEY environment variable set.
+---
+
+# DocGen — Document Generation, Excel & Receipt Recognition
+
+Generate professional PDF, DOCX, ODT documents and Excel spreadsheets from HTML/Markdown with templates, tables, QR codes, e-invoicing (ZUGFeRD/XRechnung), digital signatures, AI-powered receipt recognition, and more.
+
+## Prerequisites
+
+This skill requires the DocGen MCP server. The plugin auto-configures it via `.mcp.json`, but you must:
+
+1. Get an API key at https://developer.dokmatiq.com
+2. Set the `DOCGEN_API_KEY` environment variable (e.g. in `~/.zshrc` or `~/.bash_profile`):
+
+```bash
+export DOCGEN_API_KEY="dk_live_xxxxxxxxxxxxx"
+```
+
+3. Restart Claude Code so the env var is picked up
+
+## Capabilities
+
+### Document Generation
+
+**Simple conversion:**
+- `generate_pdf_from_html` – Convert HTML to PDF
+- `generate_pdf_from_markdown` – Convert Markdown to PDF
+
+**Advanced generation:**
+- `generate_document` – Generate with template, field replacements, watermark, and output format selection
+- `compose_document` – Compose a multi-part document from multiple sections (cover page, chapters, appendix)
+
+### E-Invoicing (ZUGFeRD / XRechnung)
+
+- `create_invoice` – Create a complete, ZUGFeRD-compliant invoice PDF with structured e-invoicing data embedded. Supports seller/buyer parties, line items with units (hours, pieces, kg, etc.), bank details, payment terms, and VAT calculation.
+- `validate_zugferd` – Validate ZUGFeRD/Factur-X PDF compliance
+- `extract_zugferd` – Extract structured invoice data from a ZUGFeRD PDF
+- `validate_xrechnung` – Validate XRechnung XML
+- `parse_xrechnung` – Parse XRechnung XML into structured data
+- `detect_xrechnung` – Detect if XML is an XRechnung and identify format
+
+### PDF Tools
+
+- `merge_pdfs` – Merge multiple PDFs into a single file
+- `extract_text_from_pdf` – Extract all text content from a PDF
+- `get_pdf_metadata` – Get title, author, page count, and other metadata
+- `convert_to_pdfa` – Convert to PDF/A archival format
+- `rotate_pdf` – Rotate pages by 90°, 180°, or 270°
+
+### PDF Forms
+
+- `inspect_pdf_form` – List all form fields with their types, values, and options
+- `fill_pdf_form` – Fill form fields and optionally flatten (lock) them
+
+### Digital Signatures
+
+- `sign_pdf` – Digitally sign a PDF with a PKCS#12 certificate
+- `verify_pdf_signatures` – Check if a PDF is signed and validate all signatures
+- `list_certificates` – List available signing certificates
+
+### Templates & Fonts
+
+- `list_templates` – List all uploaded document templates
+- `upload_template` – Upload an ODT/DOCX template for use in generation
+- `delete_template` – Remove a template
+- `list_fonts` – List uploaded custom fonts
+
+### Preview
+
+- `preview_pdf_page` – Render a PDF page as a PNG image
+- `get_pdf_page_count` – Get total number of pages
+
+### Excel Workbooks
+
+- `generate_excel` – Generate a fully styled Excel workbook from structured JSON (multiple sheets, columns, formulas, styling, headers/footers, freeze panes, print areas, merged cells, named ranges)
+- `csv_to_excel` – Convert CSV to a formatted Excel workbook with auto-filter and styled headers
+- `excel_to_csv` – Extract Excel sheet data as CSV text
+- `excel_to_json` – Extract Excel sheet data as structured JSON with typed values
+- `fill_excel_template` – Fill an Excel template with values at named cells and ranges, with formula recalculation
+- `inspect_excel` – Inspect workbook metadata (sheet names, row/column counts, named ranges)
+
+### Receipt Recognition (AI-Powered)
+
+- `extract_receipt` – Extract structured data from a receipt or invoice image (vendor, date, totals, line items, SKR03/04 account, category, confidence score)
+- `extract_receipt_async` – Submit receipt for async extraction with optional webhook callback
+- `get_receipt_job` – Check async extraction job status
+- `get_receipt_job_result` – Get extraction result of a completed async job
+- `list_receipt_jobs` – List all async receipt extraction jobs
+- `receipt_to_document` – Extract receipt data and generate an expense report document (PDF/DOCX/ODT) in one step
+- `export_receipts_csv` – Export extracted receipts as DATEV-compatible CSV
+- `export_receipts_xlsx` – Export extracted receipts as Excel workbook
+
+## Usage Patterns
+
+### Quick document generation
+
+"Generate a PDF from this HTML: `<h1>Project Report</h1><p>Summary of findings...</p>`"
+
+### Invoice creation
+
+"Create an invoice from ACME GmbH (Musterstr. 1, 10115 Berlin, VAT DE123456789) to Kunde AG (Kundenweg 5, 20095 Hamburg) for:
+- 8 hours consulting at 120€/hour
+- Travel expenses 250€ flat
+Payment to IBAN DE89370400440532013000, due in 14 days."
+
+### Document with template
+
+"Generate a document using the 'report.odt' template with fields: title=Quarterly Report, author=Max Mustermann, date=12.04.2026, and add a DRAFT watermark."
+
+### Multi-part composition
+
+"Create a multi-part document with a cover page, two chapters using the 'report-template.odt' template, and a CONFIDENTIAL watermark."
+
+### PDF operations
+
+"Merge part1.pdf and part2.pdf into one document."
+"Extract all text from this PDF."
+"Fill the form fields name=Max Mustermann and date=12.04.2026 in this PDF form."
+
+### Excel generation
+
+"Create an Excel workbook with columns Produkt, Menge, Einzelpreis, Gesamt and 5 rows of sample data, with a SUM formula in the total column, freeze the header, and format prices as #,##0.00 €."
+"Convert this CSV to a formatted Excel file."
+"Fill the 'reporting.xlsx' template with Q1 sales data."
+
+### Receipt recognition
+
+"Extract data from this receipt image – I need vendor, total, and VAT breakdown."
+"Analyze these 5 receipts and export them as a DATEV-compatible CSV."
+"Turn this receipt photo into an expense report PDF."
+
+## Notes
+
+- All file inputs/outputs use base64 encoding for binary data
+- Templates must be uploaded before they can be referenced by name
+- Invoices automatically embed ZUGFeRD XML for e-invoicing compliance
+- Digital signatures require pre-uploaded PKCS#12 certificates
+- Unit codes follow UN/ECE Recommendation 20: C62=piece, HUR=hour, DAY=day, KGM=kg
+- Receipt recognition requires AI processing consent enabled in the Dokmatiq portal (GDPR)
+- Supported receipt formats: JPEG, PNG, PDF (scans and photos)
